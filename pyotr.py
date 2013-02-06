@@ -291,19 +291,22 @@ peer_list = announce(metainfo, len(sha_list), info_hash)
 write_thread = Writer(write_target, write_queue, piece_length)
 write_thread.setDaemon(True)
 write_thread.start()
+if (peer_list):
+    print "Spinning up threads. Some will fail, since peer won't take two connections."
+    print ""
+    t = [] 
+    for (ip, port) in peer_list:
+        t.(Peer(piece_queue, ip, port, info_hash))
+        t.setDaemon(True)
+        t.start()
 
-print "Spinning up threads. Some will fail, since peer won't take two connections."
-print ""
-for (ip, port) in peer_list:
-    t = Peer(piece_queue, ip, port)
-    t.setDaemon(True)
-    t.start()
-
-piece_queue.join()
-write_thread.join()
+    piece_queue.join()
+    write_thread.join()
 
 
-print "FILE FULLY DOWNLOADED (though not yet written)"
+    print "FILE FULLY DOWNLOADED (though not yet written)"
+else:
+    print "Couldn't find any peers to connect to."
 
 
 
