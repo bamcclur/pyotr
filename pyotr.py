@@ -24,7 +24,7 @@ def splice_shas(torrent):
     sha_list = []
 
     for i in range(len(pieces)/20):
-       sha_list.append(pieces[20*i:20*(i+1)])
+        sha_list.append(pieces[20*i:20*(i+1)])
     return sha_list
 
 
