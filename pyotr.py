@@ -18,9 +18,9 @@ def decode(file_load):
     return torrent
 
 
-def splice_shas(torrent):
+
+def splice_shas(pieces):
     ''' Splices the SHA1 keys into a list '''
-    pieces = metainfo['info']['pieces']
     sha_list = []
 
     for i in range(len(pieces)/20):
@@ -278,7 +278,7 @@ write_target = open(os.getcwd() + '/' + name, 'wb+')
 write_target.write(bytearray(file_size))
 write_queue = Queue.Queue()
 
-sha_list = splice_shas(file_load)
+sha_list = splice_shas(pieces)
 piece_list = zip([x for x in range(len(sha_list))], sha_list)
 random.shuffle(piece_list)
 print "Pieces currently download in random order. Shuffling into queue.."
