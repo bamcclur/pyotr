@@ -27,7 +27,7 @@ def splice_shas(pieces):
     return sha_list
 
 
-def getdicthash(file_load):
+def get_dict_hash(file_load):
     ''' Returns the SHA1 hash of the 'info' key in the metainfo file '''
     contents = open(file_load, 'rb').read()
     start = contents.index('4:info') + 6
@@ -269,7 +269,7 @@ print "Loaded", file_load
 piece_queue = Queue.Queue()
 metainfo = decode(file_load)
 file_size = metainfo['info']['length']
-info_hash = getdicthash(file_load)
+info_hash = get_dict_hash(file_load)
 pieces = metainfo['info']['pieces']
 piece_length = metainfo['info']['piece length']
 name = metainfo['info']['name']
