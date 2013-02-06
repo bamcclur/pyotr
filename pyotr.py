@@ -46,12 +46,10 @@ def get_dict_hash(file_load):
 ''' Tracker '''
 
 
-def announce(file_load):
+def announce(metainfo, left, info_hash):
     ''' Announces to a tracker 
     
     Currently returns 1 peer's IP and port, hardcoded '''
-    torrent = decode(file_load)
-    left = len(sha_list)
     payload = {'info_hash': info_hash,
                'peer_id':'-PYOTR0-dfhmjb0skee6',
                'port':'6881',
