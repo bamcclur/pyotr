@@ -260,7 +260,8 @@ class Writer (threading.Thread):
 
 
 ''' MAIN '''
-file_load = 'Sapolsky.mp4.torrent'
+file_load = 'kubuntu.torrent'
+#file_load = 'Sapolsky.mp4.torrent'
 print "Loaded", file_load
 piece_queue = Queue.Queue()
 metainfo = decode(file_load)
