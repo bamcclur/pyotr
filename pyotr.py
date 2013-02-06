@@ -64,8 +64,11 @@ def announce(metainfo, left, info_hash):
     
     print("Announcing to tracker...")
     
-    response = requests.get(torrent['announce'], params = payload)
-    reply = bencode.bdecode(response.content)
+    response = requests.get(metainfo['announce'], params = payload)
+    try:
+        reply = bencode.bdecode(response.content)
+    except:
+        print("Not a valid bencoded string '" + response.content + "'")
     print("""
 Response received, decoded..
 peers: {0}
