@@ -210,11 +210,12 @@ class Peer(threading.Thread):
         try:
             self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.s.connect((self.ip, self.port))
+            print(self.ip + ":" + str(self.port) + " connected")
             handshake(self.s)
             #bitfield(self.s)
             # don't need it, can't get it right, gets us kicked
         except:
-            print "Couldn't connect"
+            print("Couldn't connect to " + self.ip + ":" + str(self.port))
             return
         while not piece_queue.empty():
             index, now_sha = self.piece_queue.get()
