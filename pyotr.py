@@ -282,7 +282,7 @@ sha_list = splice_shas(pieces)
 piece_list = zip([x for x in range(len(sha_list))], sha_list)
 random.shuffle(piece_list)
 print "Pieces currently download in random order. Shuffling into queue.."
-time.sleep(1)
+
 for piece in piece_list:
     piece_queue.put(piece)
 
