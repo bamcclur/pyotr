@@ -62,10 +62,7 @@ def announce(metainfo, left, info_hash):
                'compact':'1',
                'numwant':'30'}
     
-    print "Announcing to tracker in:"
-    for count_down in range(3, 0, -1):
-        time.sleep(1)
-        print count_down
+    print("Announcing to tracker...")
     
     response = requests.get(torrent['announce'], params = payload)
     reply = bencode.bdecode(response.content)
