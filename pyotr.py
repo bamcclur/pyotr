@@ -76,14 +76,19 @@ complete: {1}
 interval: {2}
 incomplete: {3}
 """.format(repr(reply['peers']), reply['complete'], reply['interval'], reply['incomplete']))
-
     data = reply['peers']
-    multiple = len(data)/6
-    #print struct.unpack("!" + "LH"*multiple, data)
-    print "Converting 'peers' to more readable form:"
+    print data
+    print ""
     peer_list = []
-    for i in range(0, multiple):
-        peer_list.append((inet_ntop(2, data[6*i:6*i+4]), struct.unpack("!H", data[6*i+4:6*i+6])[0]))
+    for i in range(0, len(data)/6):
+        peer_list.append((inet_ntop(2, data[6*i:6*i+4]), 
+                         struct.unpack("!H", data[6*i+4:6*i+6])[0]))
+    
+    '''There exists a scenario where even though we've specified compact, 
+    we do not get a compact result, the following is to handle this case'''    
+    if (peer_list == []):
+        for i in range(0, len(data)):
+            peer_list.append((data[i]['ip'], data[i]['port']))
     print peer_list
     return peer_list
 
