@@ -32,9 +32,9 @@ def getdicthash(file_load):
     contents = open(file_load, 'rb').read()
     start = contents.index('4:info') + 6
     end = -1
-    dictliteral = contents[start:end]
-    dictsha = sha.new(dictliteral)
-    return dictsha.digest()
+    dict_literal = contents[start:end]
+    dict_sha = sha.new(dict_literal)
+    return dict_sha.digest()
 
 
 
