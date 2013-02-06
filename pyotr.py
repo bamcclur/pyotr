@@ -108,8 +108,13 @@ class Peer(threading.Thread):
     def receive_loop(self, index):
         ''' Gets multiple blocks now '''
         if piece_queue.empty():
+            print "piece_queue empty"
+            print ""
             piece_data = [None]*(file_size%piecelength)
-        else: piece_data = [None]*piece_length
+        else: 
+            print "piece_queue not empty"
+            print ""
+            piece_data = [None]*piece_length
         while True:
             flag, data = self.flagmsg()
             print "Message type:", flag
@@ -127,7 +132,7 @@ class Peer(threading.Thread):
             elif flag == 'not interested':
                 print "Peer is not interested in what we have so far."
             elif flag == 'have':
-                print "Peer now has this piece"
+                print "Peer now has this piece " + str(index)
             elif flag == 'bitfield':
                 num = int(data.encode('hex'), 16)
                 bitfield = bin(num)[2:len(sha_list)+2]
@@ -135,6 +140,7 @@ class Peer(threading.Thread):
                 print bitfield
                 time.sleep(1)
             elif flag == 'request':
+                print "Request"
                 break
             elif flag == 'piece':
                 piece, offset = struct.unpack('!LL', data[:8])
