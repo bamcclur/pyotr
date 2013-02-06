@@ -14,8 +14,7 @@ from dns.inet import inet_ntop
 
 def decode(file_load):
     ''' Decodes the bencoded file, returns decoded dictionary '''
-    torrent = bencode.bdecode(open(file_load, 'rb').read())
-    return torrent
+    return bencode.bdecode(open(file_load, 'rb').read())
 
 
 
