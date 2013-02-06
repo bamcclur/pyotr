@@ -8,7 +8,7 @@ import threading
 import time
 import random
 import os
-from dns.inet import inet_ntop
+from dns.inet import inet_ntop as inet_ntop
 
 ''' Metainfo '''
 
