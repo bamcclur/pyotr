@@ -52,7 +52,7 @@ def announce(metainfo, left, info_hash):
     Currently returns 1 peer's IP and port, hardcoded '''
     payload = {'info_hash': info_hash,
                'peer_id':'-PYOTR0-dfhmjb0skee6',
-               'port':'6881',
+               'port':'57710',
                'uploaded':'0',
                'downloaded':'0',
                'key':'2c4dec5f',
