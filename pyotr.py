@@ -10,6 +10,8 @@ import random
 import os
 from dns.inet import inet_ntop as inet_ntop
 
+    
+
 ''' Metainfo '''
 
 def decode(file_load):
@@ -39,6 +41,7 @@ def get_dict_hash(file_load):
 
 
 ''' Networking? '''
+
 
 
 
@@ -245,6 +248,8 @@ class Peer(threading.Thread):
             if not expected:
                 break
         return data
+        
+        
 class Writer (threading.Thread):
     ''' Thread that writes data to disk from finished pieces queue (aka write_queue) '''
     def __init__(self, write_target, write_queue, piece_length):
