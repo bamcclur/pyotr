@@ -18,7 +18,9 @@ def decode(file_load):
     ''' Decodes the bencoded file, returns decoded dictionary '''
     return bencode.bdecode(open(file_load, 'rb').read())
 
-
+def set_bitfield():
+    bits = list('0'*(len(pieces)/20))
+    return bits    
 
 def splice_shas(pieces):
     ''' Splices the SHA1 keys into a list '''
@@ -107,7 +109,9 @@ class Peer(threading.Thread):
         self.port = port
         self.ip = ip
         self.info_hash = info_hash
-		
+		#self.is_choking
+        #self.is_iterested
+        
     def receive_loop(self, index):
         ''' Gets multiple blocks now '''
         if piece_queue.empty():
@@ -138,9 +142,9 @@ class Peer(threading.Thread):
                 print "Peer now has this piece " + str(index)
             elif flag == 'bitfield':
                 num = int(data.encode('hex'), 16)
-                bitfield = bin(num)[2:len(sha_list)+2]
-                bfield = [ (True if x == '1' else False) for x in bitfield ]
-                print bitfield
+                peers_bitfield = bin(num)[2:len(sha_list)+2]
+                bfield = [ (True if x == '1' else False) for x in peers_bitfield ]
+                print peers_bitfield
                 time.sleep(1)
             elif flag == 'request':
                 print "Request"
@@ -154,6 +158,7 @@ class Peer(threading.Thread):
                 piece_data[offset:offset+16384] = data[8:]
                 if None not in piece_data:
                     print "yay! finished a piece!"
+                    bitfield[piece] = '1';
                     break
                 self.s.sendall(self.make_request(index, (offset+16384), 16384))
             elif flag == 'cancel':
@@ -166,7 +171,7 @@ class Peer(threading.Thread):
             self.s.connect((self.ip, self.port))
             print(self.ip + ":" + str(self.port) + " connected")
             self.handshake()
-            #bitfield(self.s)
+            self.send_bitfield()
             # don't need it, can't get it right, gets us kicked
         except:
             print("Couldn't connect to " + self.ip + ":" + str(self.port))
@@ -199,10 +204,9 @@ class Peer(threading.Thread):
     
     def handshake(self):
         ''' Initiates handshake with peer '''
-        msg = chr(19) + 'BitTorrent protocol' + '\x00'*8 + self.info_hash + '-PYOTR0-dfhmjb0skee6'
-        print "Beginning handshake with peer"
-        self.s.send(msg)
-        print "Handshake sent: ", repr(msg)
+        handshake_msg = chr(19) + 'BitTorrent protocol' + '\x00'*8 + self.info_hash + '-PYOTR0-dfhmjb0skee6'
+        self.s.send(handshake_msg)
+        print "Handshake sent: ", repr(handshake_msg)
         print "Handshake rcvd: %s" % repr(self.s.recv(68))
                 
     def flagmsg(self):
@@ -227,11 +231,17 @@ class Peer(threading.Thread):
         return struct.pack('!L', 5) + chr(4) + struct.pack('!L', piece)
 
     # the length is incorrect. why?
-    def bitfield(self):
-        ''' Sends bitfield '''
-        length = len(pieces)/20
-        print length
-        msg = struct.pack('!L', length+1) + chr(5) + '\x00'*(length-1)
+    def send_bitfield(self):
+        ''' Sends bitfield '''        
+        padding_length = len(pieces)/20%8
+        if (padding_length != 0):
+            padding_length = 8 - padding_length
+        padding = '0' * padding_length
+        bits = ("".join(bitfield) + padding)
+        bits = (hex(int(bits,2)))
+        bits = bits[2:bits.__len__()-1]
+        payload = chr(5) + bits
+        msg = struct.pack('!L', len(payload)) + payload
         self.s.send(msg)
         
     def make_request(self, piece, offset, length):
@@ -270,9 +280,14 @@ class Writer (threading.Thread):
                 return
 
 
+
+                
 ''' MAIN '''
+output_file = open('output.txt','w')
 file_load = 'kubuntu.torrent'
 #file_load = 'Sapolsky.mp4.torrent'
+#Eclipse didn't work.
+#file_load = 'eclipse-jee-juno-SR1-win32-x86_64.zip.torrent'
 print "Loaded", file_load
 piece_queue = Queue.Queue()
 metainfo = decode(file_load)
@@ -281,6 +296,8 @@ info_hash = get_dict_hash(file_load)
 pieces = metainfo['info']['pieces']
 piece_length = metainfo['info']['piece length']
 name = metainfo['info']['name']
+bitfield = set_bitfield()
+print ("bitfield: " + "".join(bitfield))
 # preallocates a file size... just one file though
 write_target = open(os.getcwd() + '/' + name, 'wb+')
 write_target.write(bytearray(file_size))
@@ -305,9 +322,9 @@ write_thread.start()
 if (peer_list):
     print "Spinning up threads. Some will fail, since peer won't take two connections."
     print ""
-    t = [] 
+     
     for (ip, port) in peer_list:
-        t.(Peer(piece_queue, ip, port, info_hash))
+        t = (Peer(piece_queue, ip, port, info_hash))
         t.setDaemon(True)
         t.start()
 
